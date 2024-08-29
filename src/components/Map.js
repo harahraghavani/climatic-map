@@ -2,14 +2,12 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import CurrentLocationMarker from "./CurrentLocationMarker";
 import { INITIAL_ZOOM_LEVEL } from "../constants/constant";
-import { useGetCurrentPosition } from "../hooks/useGetCurrentPosition";
 
-const Map = () => {
-  const { markerPosition } = useGetCurrentPosition();
-
+const Map = ({ marker, isSearched, isCleared, weatherData }) => {
+  console.log("weatherData: ", weatherData);
   return (
     <MapContainer
-      center={markerPosition}
+      center={marker}
       zoom={INITIAL_ZOOM_LEVEL}
       scrollWheelZoom={true}
       style={{ width: "100%", height: "100%" }}
@@ -27,7 +25,11 @@ const Map = () => {
         attribution=""
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <CurrentLocationMarker />
+      <CurrentLocationMarker
+        marker={marker}
+        isSearched={isSearched}
+        isCleared={isCleared}
+      />
     </MapContainer>
   );
 };
