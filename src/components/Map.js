@@ -4,13 +4,17 @@ import CurrentLocationMarker from "./CurrentLocationMarker";
 import { INITIAL_ZOOM_LEVEL } from "../constants/constant";
 
 const Map = ({ marker, isSearched, isCleared, weatherData }) => {
-  console.log("weatherData: ", weatherData);
   return (
     <MapContainer
       center={marker}
       zoom={INITIAL_ZOOM_LEVEL}
       scrollWheelZoom={true}
-      style={{ width: "100%", height: "100%" }}
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        zIndex: 99,
+      }}
       zoomAnimation={true}
       zoomControl={false}
       markerZoomAnimation={true}

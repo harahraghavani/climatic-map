@@ -1,5 +1,4 @@
 import "./App.css";
-import Map from "./components/Map";
 import Home from "./views/Home";
 
 function App() {

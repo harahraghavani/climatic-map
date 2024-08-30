@@ -1,8 +1,17 @@
+import axios from "axios";
 import { axiosInstance } from "./apiInstance";
 
-export const API = async ({ endpoint, params = {} }) => {
+export const API = async ({
+  endpoint,
+  params = {},
+  getLatAndLon = false,
+  baseURL,
+}) => {
   try {
-    const response = await axiosInstance({
+    const myApiInstance = getLatAndLon
+      ? axios.create({ baseURL })
+      : axiosInstance;
+    const response = await myApiInstance({
       url: `${endpoint}`, // Use the endpoint here
       params: {
         ...params,
@@ -11,7 +20,6 @@ export const API = async ({ endpoint, params = {} }) => {
     });
     return response.data;
   } catch (error) {
-    console.log(error?.message);
     throw error;
   }
 };

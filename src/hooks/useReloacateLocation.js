@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useMap } from "react-leaflet";
 import { INITIAL_ZOOM_LEVEL } from "../constants/constant";
 
