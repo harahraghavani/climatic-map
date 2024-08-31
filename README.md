@@ -14,7 +14,6 @@ Climatic Map is a weather application that provides real-time weather informatio
 
 - **Climatic Map:**
   - Integrated with React Leaflet for a seamless map experience.
-  - Visualizes weather conditions at the selected or searched location.
 
 ## Technologies Used
 
