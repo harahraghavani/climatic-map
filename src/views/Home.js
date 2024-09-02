@@ -9,10 +9,10 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Tooltip,
   List,
   ListItem,
   Text,
+  keyframes,
 } from "@chakra-ui/react";
 import WeatherCard from "../components/WeatherCard";
 import { CiSearch } from "react-icons/ci";
@@ -22,6 +22,9 @@ import { API } from "../api";
 import { API_ENDPOINTS } from "../constants/apiEndPoints";
 import backgroundImage from "../assets/Background.jpg";
 import CountryFlag from "../components/CountryFlag";
+import EnableLocationAnimation from "../components/EnableLocationAnimation";
+import { FaLongArrowAltUp } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 const Home = () => {
   const {
@@ -35,7 +38,6 @@ const Home = () => {
     isSearched,
     setIsCleared,
     isCleared,
-    weatherData,
     searchedVal,
     setSearchedVal,
     suggestions,
@@ -46,6 +48,20 @@ const Home = () => {
     isSearchLoading,
     setIsSearchLoading,
   } = useGetCurrentPosition();
+
+  const [showButton, setShowButton] = useState(false);
+
+  const rainbowGradient = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
 
   const handleSearchPlace = async () => {
     setIsSearchLoading(true);
@@ -83,6 +99,23 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        // Adjust this value based on when you want the button to appear
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div>
       {isLoading ? (
@@ -98,13 +131,37 @@ const Home = () => {
           <LoadingWeatherAnimation />
         </div>
       ) : error ? (
-        <p>Please enable location services to access the map.</p>
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          height="100vh"
+          width="100%"
+          direction="column"
+        >
+          <EnableLocationAnimation />
+          <Text
+            textAlign="center"
+            fontSize={{
+              base: "md",
+              sm: "lg",
+            }}
+            fontWeight="medium"
+            color="gray.700"
+            mt={4}
+            lineHeight="tall"
+            maxW="80%"
+          >
+            To provide a personalized experience,
+            <br />
+            please enable location services.
+          </Text>
+        </Flex>
       ) : position && markerPosition ? (
-        <Box backgroundImage={`url(${backgroundImage})`}>
+        <Box backgroundImage={`url(${backgroundImage})`} position="relative">
           <Grid mx="auto" justifyContent="center" alignItems="center" py={5}>
             <GridItem justifySelf="center">
               <Flex justifyContent="center" alignItems="center" gap={2}>
-                <InputGroup position="relative">
+                <InputGroup position="relative" zIndex={9}>
                   <InputLeftElement pointerEvents="none">
                     <CiSearch color="white" />
                   </InputLeftElement>
@@ -182,21 +239,19 @@ const Home = () => {
                     )
                   )}
                 </InputGroup>
-                <Tooltip label="click to search" fontSize="sm">
-                  <IconButton
-                    isLoading={isSearchLoading}
-                    icon={<MdGpsFixed />}
-                    variant="outline"
-                    _hover={{ bg: "transparent" }}
-                    onClick={handleSearchPlace}
-                    color={"white"}
-                    bg="rgba(255, 255, 255, 0.1)"
-                    backdropFilter="blur(20px)"
-                    _focusVisible={{
-                      borderColor: "white",
-                    }}
-                  />
-                </Tooltip>
+                <IconButton
+                  isLoading={isSearchLoading}
+                  icon={<MdGpsFixed />}
+                  variant="outline"
+                  _hover={{ bg: "transparent" }}
+                  onClick={handleSearchPlace}
+                  color={"white"}
+                  bg="rgba(255, 255, 255, 0.1)"
+                  backdropFilter="blur(20px)"
+                  _focusVisible={{
+                    borderColor: "white",
+                  }}
+                />
               </Flex>
             </GridItem>
           </Grid>
@@ -227,12 +282,39 @@ const Home = () => {
                     marker={markerPosition}
                     isSearched={isSearched}
                     isCleared={isCleared}
-                    weatherData={weatherData}
                   />
                 </Box>
               </GridItem>
             </Grid>
           </Box>
+          {showButton && (
+            <Box
+              position="fixed"
+              bottom="25px"
+              right="25px"
+              zIndex={999999999}
+              display={{ base: "block", md: "sm" }}
+              width={"fit-content"}
+            >
+              <IconButton
+                icon={<FaLongArrowAltUp />}
+                rounded="full"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                sx={{
+                  background:
+                    "linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00bfff, #ff69b4, #800080)",
+                  backgroundSize: "400% 400%",
+                  animation: `${rainbowGradient} 10s ease infinite`,
+                  border: "none",
+                  color: "white",
+                  _hover: {
+                    bg: "transparent",
+                    color: "black",
+                  },
+                }}
+              />
+            </Box>
+          )}
         </Box>
       ) : null}
     </div>
